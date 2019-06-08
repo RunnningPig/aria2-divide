@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# vim: noai:ts=2:sw=2
+# $1: gid
+# $2: the number of files
+# $3: file path
+# upload aria2 download to remote using rclone
+set -o nounset -o errexit -o pipefail
+IFS=$'\n\t'
+
+SCRIPT_PATH="$(cd "$(dirname "$0")"; pwd)"
+LOGFILE="${SCRIPT_PATH}/user_action.log"
+
+. "${SCRIPT_PATH}/core/aria2.sh"
+
+log() {
+  echo "$(date '+%Y-%m-%d %H:%M:%S') $@" >> "${LOGFILE}"
+}
+
+download_path="$(aria2.getDownloadPath)"
+file="${3-}"
+parent="${file%/*}"
+while [[ "${parent:-/}" != '/' && "${parent}" != "${download_path}" ]]; do
+  file="${parent}"
+  parent="${file%/*}"
+done
+[[ "${parent}" == "${download_path}" ]] || exit 1
+
+remote_path="onedirve:"
+[[ -f "${file}" ]] && rclone copy "${file}" "${remote_path}"
+[[ -d "${file}" ]] && rclone copy "${file}" "${remote_path}/${file##*/}"
+:
