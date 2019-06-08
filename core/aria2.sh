@@ -571,6 +571,7 @@ aria2.test() {
   echo -e "Aria2 相关信息："
   echo -e
   echo -e "\t配置文件: ${Green_font_prefix}${ARIA2CONFIG}${Font_color_suffix}"
+  echo -e "\t下载路径: ${Green_font_prefix}${DOWNLOAD_PATH}${Font_color_suffix}"
   echo -e "\tRPC 地址: ${Green_font_prefix}${RPC_ADDRESS}${Font_color_suffix}"
   echo -e "\tRPC 密钥: ${Green_font_prefix}${RPC_SECRET:-无密钥}${Font_color_suffix}"
   echo -e
@@ -585,6 +586,9 @@ aria2.test() {
 if [[ -z "${ARIA2CONFIG-}" ]]; then
   declare -r ARIA2CONFIG="$(aria2.getConfPath)"
 fi
+
+declare -r DOWNLOAD_PATH="$(aria2.getDownloadPath)"
+
 if aria2.isRPCEncryption; then
   declare -r RPC_PROTOCOL="https"
 else
